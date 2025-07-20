@@ -6,6 +6,8 @@ import ray
 from Source.genotype import RandomForestParams
 from sklearn.model_selection import StratifiedKFold
 import pandas as pd
+import time
+from datetime import timedelta
 
 CV_K = 5
 REPLICATES = 20
@@ -74,6 +76,8 @@ def load_task(task_id: int, data_dir: str, preprocess=True):
 
 # execute task with tpot2
 def execute_experiment(task_id: int, n_jobs: int, save_path: str, seed: int, data_dir: str):
+    start_time = time.time()
+ 
     # variables
     total_evals = 10000
 
@@ -88,6 +92,7 @@ def execute_experiment(task_id: int, n_jobs: int, save_path: str, seed: int, dat
     if os.path.exists(save_folder):
         print('FOLDER ALREADY EXISTS:', save_folder)
         return
+    os.makedirs(save_folder, exist_ok=True)
 
     print("LOADING DATA")
     X_train, y_train, X_test, y_test = load_task(task_id, data_dir, preprocess=True)
@@ -160,5 +165,10 @@ def execute_experiment(task_id: int, n_jobs: int, save_path: str, seed: int, dat
     })
     # save results to csv
     results.to_csv(f"{save_folder}/results.csv", index=False)
+
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    formatted_time = str(timedelta(seconds=int(elapsed_time)))
+    print(f"EXPERIMENT COMPLETED IN {elapsed_time:.2f} seconds OR {formatted_time}.")
 
     return
