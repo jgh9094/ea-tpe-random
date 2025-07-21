@@ -66,8 +66,14 @@ for task, test_scores in test_scores_by_task.items():
 
 print(avg_test_score_by_task, std_test_score_by_task)
 
-# Save aggregated results
-with open(f"{res_dir}/agg_test.csv", "w") as f:
-    f.write("task_id,avg,std\n")
-    for task in avg_test_score_by_task:
-        f.write(f"{task},{avg_test_score_by_task[task]},{std_test_score_by_task[task]}\n")
+# Make dataframe
+agg_df = pd.DataFrame({
+    'task_id': list(avg_test_score_by_task.keys()),
+    'avg_test_score': list(avg_test_score_by_task.values()),
+    'std_test_score': list(std_test_score_by_task.values()),
+})
+
+# Sort by average (ascending)
+agg_df = agg_df.sort_values(by='avg_test_score', ascending=True)
+agg_df.to_csv(os.path.join(res_dir, "agg_test.csv"), index=False)
+
