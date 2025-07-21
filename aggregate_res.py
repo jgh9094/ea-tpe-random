@@ -4,6 +4,7 @@ import os
 import re
 import numpy as np
 
+
 # Path structure: results/{task_id}/
 #                 Rep_{SLURM_ARRAY_TASK_ID}/
 #                 {SLURM_ARRAY_TASK_ID}-{task_id}/
@@ -43,8 +44,13 @@ for task, replicates in reps_by_task.items():
     scores = []
     # Retrieve test scores from each replicate
     for rep in replicates:
-        df = pd.read_csv(os.path.join(res_dir, 
-                         f"{task}/Rep_{rep}/{rep}-{task}/results.csv"))
+        results_path = os.path.join(res_dir, f"{task}/Rep_{rep}/{rep}-{task}/results.csv")
+        # If folder exists, but not results.csv
+        if not os.path.exists(results_path):
+            print(f"Missing results.csv for task {task}, replicate {rep}, skipping.")
+            continue
+
+        df = pd.read_csv(results_path)
         scores.append(df['test_score'].iloc[0])
     test_scores_by_task[task] = scores
 
@@ -52,6 +58,9 @@ for task, replicates in reps_by_task.items():
 avg_test_score_by_task = {}
 std_test_score_by_task = {}
 for task, test_scores in test_scores_by_task.items():
+    if len(test_scores) == 0:
+        print(f"No valid scores found for task {task}, skipping.")
+        continue
     avg_test_score_by_task[task] = np.mean(test_scores)
     std_test_score_by_task[task] = np.std(test_scores)
 
