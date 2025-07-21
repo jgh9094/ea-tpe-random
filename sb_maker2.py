@@ -6,6 +6,7 @@ import pandas as pd
 if __name__ == "__main__":    # Example usage
     # read csv file
     df = pd.read_csv('/common/suzuek/ea-tpe-random/data/task_list.csv')
+    df = df.sort_values(by='rows', ascending=True)
 
     # get task_id column as list
     task_ids = df['task_id'].tolist()
@@ -24,7 +25,7 @@ if __name__ == "__main__":    # Example usage
     print("#SBATCH --nodes=1")
     print("#SBATCH --ntasks=1")
     print("#SBATCH --array=1-1065")
-    print("#SBATCH --cpus-per-task=8")
+    print("#SBATCH --cpus-per-task=12")
     print("#SBATCH -t 24:00:00")
     print("#SBATCH --mem=100GB")
     print("#SBATCH --job-name=rng_rf")
@@ -72,7 +73,7 @@ if __name__ == "__main__":    # Example usage
     print("# todo: let it rip")
     print("python /common/suzuek/ea-tpe-random/runner.py \\")
     print("-task_id ${TASK_ID} \\")
-    print("-n_jobs 8 \\")
+    print("-n_jobs 12 \\")
     print("-save_path ${REP_DIR} \\")
     print("-seed ${SLURM_ARRAY_TASK_ID} \\")
     print("-data_dir ${DATA_DIR} \\")
