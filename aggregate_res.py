@@ -1,0 +1,64 @@
+import pandas as pd
+from pathlib import Path
+import os
+import re
+import numpy as np
+
+# Path structure: results/{task_id}/
+#                 Rep_{SLURM_ARRAY_TASK_ID}/
+#                 {SLURM_ARRAY_TASK_ID}-{task_id}/
+#                 results.csv
+
+# Fetch a list of task IDs
+# task_id_df = pd.read_csv('/common/suzuek/ea-tpe-random/data/task_list.csv')
+task_id_df = pd.read_csv('data/task_list.csv') # FOR TESTING ONLY
+task_ids = task_id_df['task_id'].tolist()
+
+# For each task_id, store a list of replicate numbers like so:
+# task_id: [1, 2, 3, ..., 15]
+reps_by_task = {}
+# res_dir = '/common/suzuek/ea-tpe-random/results/'
+res_dir = 'results/' # FOR TESTING ONLY
+for task_id in task_ids:
+    path = os.path.join(res_dir, str(task_id))
+    if not os.path.isdir(path):
+        print(f"Task {task_id} does not exist.")
+    else:
+        # store names (strings) of all 'Rep_{SLURM_ARRAY_TASK_ID}' folders
+        rep_folders = os.listdir(path)
+
+        # extract SLURM array ID for current task
+        rep_numbers = []
+        for folder in rep_folders:
+            match = re.search(r'Rep_(\d+)', folder)
+            if match:
+                rep_numbers.append(int(match.group(1)))
+
+        reps_by_task[task_id] = rep_numbers
+
+
+# Store a list of test scores for each task_id
+test_scores_by_task = {}
+for task, replicates in reps_by_task.items():
+    scores = []
+    # Retrieve test scores from each replicate
+    for rep in replicates:
+        df = pd.read_csv(os.path.join(res_dir, 
+                         f"{task}/Rep_{rep}/{rep}-{task}/results.csv"))
+        scores.append(df['test_score'].iloc[0])
+    test_scores_by_task[task] = scores
+
+
+avg_test_score_by_task = {}
+std_test_score_by_task = {}
+for task, test_scores in test_scores_by_task.items():
+    avg_test_score_by_task[task] = np.mean(test_scores)
+    std_test_score_by_task[task] = np.std(test_scores)
+
+print(avg_test_score_by_task, std_test_score_by_task)
+
+# Save aggregated results
+with open(f"{res_dir}/agg_test.csv", "w") as f:
+    f.write("task_id,avg,std\n")
+    for task in avg_test_score_by_task:
+        f.write(f"{task},{avg_test_score_by_task[task]},{std_test_score_by_task[task]}\n")
