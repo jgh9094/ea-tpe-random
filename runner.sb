@@ -241,7 +241,7 @@ TASK_360112_MAX=1065
 # Conditions
 ##################################
 
-elif [ ${SLURM_ARRAY_TASK_ID} -ge $TASK_190412_MIN ] && [ ${SLURM_ARRAY_TASK_ID} -le $TASK_190412_MAX ] ; then
+if [ ${SLURM_ARRAY_TASK_ID} -ge $TASK_190412_MIN ] && [ ${SLURM_ARRAY_TASK_ID} -le $TASK_190412_MAX ] ; then
     TASK_ID=190412
     REP_DIR=${RESULTS_DIR}/${TASK_ID}/Rep_${SLURM_ARRAY_TASK_ID}/
 elif [ ${SLURM_ARRAY_TASK_ID} -ge $TASK_359953_MIN ] && [ ${SLURM_ARRAY_TASK_ID} -le $TASK_359953_MAX ] ; then
@@ -462,8 +462,8 @@ mkdir -p ${REP_DIR}
 
 # todo: let it rip
 python /common/suzuek/ea-tpe-random/runner.py \
--task_id ${TASK_ID} \
--n_jobs 12 \
--save_path ${REP_DIR} \
--seed ${SLURM_ARRAY_TASK_ID} \
--data_dir ${DATA_DIR} \
+--task_id ${TASK_ID} \
+--n_jobs 12 \
+--save_path ${REP_DIR} \
+--seed ${SLURM_ARRAY_TASK_ID} \
+--data_dir ${DATA_DIR} \
