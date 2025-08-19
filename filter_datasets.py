@@ -54,4 +54,4 @@ if (os.path.isfile(agg_test_dir)):
     print(filtered_df)
 
 
-    filtered_df.to_csv('filtered_scores.csv', index=False)
+    filtered_df.to_csv('results/filtered_scores.csv', index=False)
