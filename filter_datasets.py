@@ -1,5 +1,7 @@
 """
-Script to filter out datasets with fewer than 15 runs.
+Script to filter out datasets with fewer than 15 runs (from the random search - RF experiment).
+Produces 2 .csv files: "filtered_task_list.csv", and "filtered_scores.csv".
+Requires 'results' folder and "random_scores.csv" to work. 
 """
 
 import os
