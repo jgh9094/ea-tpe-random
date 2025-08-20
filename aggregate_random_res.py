@@ -1,6 +1,6 @@
 """
 Script to compile and aggregate results from the random search - RF experiment.
-Produces "agg_test.csv"
+Produces "random_scores.csv"
 """
 
 import pandas as pd
@@ -80,5 +80,5 @@ agg_df = pd.DataFrame({
 
 # Sort by average (ascending)
 agg_df = agg_df.sort_values(by='avg_test_score', ascending=True)
-agg_df.to_csv(os.path.join(res_dir, "agg_test.csv"), index=False)
+agg_df.to_csv(os.path.join(res_dir, "random_scores.csv"), index=False)
 

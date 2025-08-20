@@ -47,7 +47,7 @@ for item in os.listdir(results_dir):
 print(f"Datasets with {max_runs} runs: ", complete_datasets)
 
 # Assuming agg_test.csv is in results dir
-agg_test_dir = os.path.join(results_dir, 'agg_test.csv')
+agg_test_dir = os.path.join(results_dir, 'random_scores.csv')
 if (os.path.isfile(agg_test_dir)):
     old_df = pd.read_csv(agg_test_dir)
     old_df['task_id'] = old_df['task_id'].astype(str)
@@ -56,7 +56,7 @@ if (os.path.isfile(agg_test_dir)):
     print(filtered_df)
 
 
-    filtered_df.to_csv('results/filtered_scores.csv', index=False)
+    filtered_df.to_csv('results/filtered_random_scores.csv', index=False)
 
 complete_datasets_df = pd.DataFrame(complete_datasets, columns=["task_id"])
 complete_datasets_df.to_csv('filtered_task_list.csv', index=False)
