@@ -55,3 +55,5 @@ if (os.path.isfile(agg_test_dir)):
 
 
     filtered_df.to_csv('results/filtered_scores.csv', index=False)
+
+complete_datasets.to_csv('filtered_task_list.csv', header=["task_id"], index=False)
