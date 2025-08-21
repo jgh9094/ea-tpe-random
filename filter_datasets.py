@@ -46,7 +46,7 @@ for item in os.listdir(results_dir):
 
 print(f"Datasets with {max_runs} runs: ", complete_datasets)
 
-# Assuming agg_test.csv is in results dir
+# Assuming random_scores.csv is in results dir
 agg_test_dir = os.path.join(results_dir, 'random_scores.csv')
 if (os.path.isfile(agg_test_dir)):
     old_df = pd.read_csv(agg_test_dir)

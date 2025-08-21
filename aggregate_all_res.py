@@ -46,7 +46,7 @@ def dict_to_df(score_dict, method_name):
 # all_scores is long format
 def merge(random_df, ea_scores, tpebo_scores, tpec_scores, output_path):
     # long_df = pd.DataFrame(columns=["method", "task_id", "avg_test_score", "std_test_score"])
-    methods = ["Random", "EA", "TPEBO", "TPEC"]
+    # methods = ["Random", "EA", "TPEBO", "TPEC"]
     random_df["method"] = "Random"
     random_df = random_df[["method", "task_id", "avg_test_score", "std_test_score"]]
     
