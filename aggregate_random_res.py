@@ -1,6 +1,7 @@
 """
 Script to compile and aggregate results from the random search - RF experiment.
-Produces "random_scores.csv"
+Produces "random_scores.csv".
+Requires the 'results' folder. 
 """
 
 import pandas as pd
