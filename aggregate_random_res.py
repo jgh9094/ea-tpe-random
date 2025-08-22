@@ -25,7 +25,7 @@ task_ids = task_id_df['task_id'].tolist()
 # task_id: [1, 2, 3, ..., 15]
 reps_by_task = {}
 # res_dir = '/common/suzuek/ea-tpe-random/results/'
-res_dir = 'results/' # FOR TESTING ONLY
+res_dir = 'results/' 
 for task_id in task_ids:
     path = os.path.join(res_dir, str(task_id))
     if not os.path.isdir(path):
