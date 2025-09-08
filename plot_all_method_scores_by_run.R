@@ -36,14 +36,13 @@ p_theme <- theme(
 plots <- list() # empty list to hold plots
 
 for (i in seq_along(task_id_lists)) {
-    task_data <- filter(scores, task_id == task_id_lists[1])
+    task_data <- filter(scores, task_id == task_id_lists[i])
     plot <- ggplot(task_data, aes(x = method, y = test_score, color = method, fill = method, shape = method)) +
     geom_flat_violin(position = position_nudge(x = 0.1, y = 0), scale = 'width', alpha = 0.2, width = 1.5) +
     geom_boxplot(color = 'black', width = .08, outlier.shape = NA, alpha = 0.0, linewidth = 0.8, position = position_nudge(x = .15, y = 0)) +
     geom_point(position = position_jitter(width = .015, height = .0001), size = 2.0, alpha = 1.0) +
     scale_y_continuous(
         name = "Accuracy %",
-        breaks = c(.74, .78, .82, .86),
         labels = scales::percent
     ) +
     scale_x_discrete(name = "Method") +
@@ -66,31 +65,3 @@ legend <- get_legend(
 
 final_plot <- plot_grid(plotlist = plots, ncol = 2)
 ggsave("all_tasks.pdf", final_plot, width=12, height=30)
-
-# task_1 <- filter(scores, task_id == task_id_lists[1]) %>%
-#   ggplot(., aes(x = method, y = test_score, color = method, fill = method, shape = method)) +
-#   geom_flat_violin(position = position_nudge(x = 0.1, y = 0), scale = 'width', alpha = 0.2, width = 1.5) +
-#   geom_boxplot(color = 'black', width = .08, outlier.shape = NA, alpha = 0.0, linewidth = 0.8, position = position_nudge(x = .15, y = 0)) +
-#   geom_point(position = position_jitter(width = .015, height = .0001), size = 2.0, alpha = 1.0) +
-#   scale_y_continuous(
-#     name="Accuracy %",
-#     breaks=c(.74,.78,.82,.86),
-#     labels = scales::percent
-
-#   ) +
-#   scale_x_discrete(
-#     name="Method"
-#   )+
-#   scale_shape_manual(values=SHAPE)+
-#   scale_colour_manual(values = cb_palette, ) +
-#   scale_fill_manual(values = cb_palette) +
-#   ggtitle('Random Forest Test Accuracy')+
-#   p_theme
-
-
-# save_plot(
-#   paste(filename ="accuracy.pdf"),
-#   task_1,
-#   base_width=10,
-#   base_height=17
-# )
