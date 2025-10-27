@@ -1,34 +1,37 @@
-# Keeps track of how many runs out of 10 finished for each task
-# Produces a table
-# Dir: 'results/{task_id}/Rep_{slurm_array_id}/{task_id}-{slurm_id}/results.csv'
-# csv structure: task_id,seed,best_cv_score,test_score
+"""
+Directory structure:
+    'results/{task_id}/Rep_{slurm_array_id}/{task_id}-{slurm_id}/results.csv'
 
+Each 'results.csv' has: 
+    task_id,seed,best_cv_score,test_score
+
+Output CSV ("completion_summary.csv"): 
+    task_id, seed, best_cv_score, test_score, finished
+"""
 import pandas as pd
 import os
-import re
-
-# TODO: when you go into task_id folder, check if there are 10 folders inside
-
 
 if __name__ == "__main__":
     results_path = 'results/'
+    task_list_path = 'data/task_list.csv'
 
-    df = pd.read_csv('/common/suzuek/ea-tpe-random/data/task_list.csv')
+    df = pd.read_csv(task_list_path)
     df = df.sort_values(by='rows', ascending=True)
-    # get task_id column as list
     task_ids = df['task_id'].tolist()
 
-    summary = [] # stores (task_id, completed runs)
+    compiled_rows = [] # list of dicts
+
     for task_id in task_ids:
+        # results/{task_id}
         task_dir = os.path.join(results_path, str(task_id))
         if not os.path.exists(task_dir):
-            summary.append((task_id, 0))
+            print(f"Folder for task {task_id} doesn't exist.")
             continue
-        
-        # count subfolders that contain a valid results.csv
-        completed = 0
+
+        # results/{task_id}/Rep_{slurm_id}
         for rep_folder in os.listdir(task_dir):
-            # {task_id}/Rep_{slurm_id}
+            # ignore folders that don't start with "Rep_"
+            if not rep_folder.startswith("Rep_"): continue
             rep_path = os.path.join(task_dir, rep_folder)
             if not os.path.isdir(rep_path): 
                 print(f"{rep_path} doesn't exist.")
@@ -38,11 +41,32 @@ if __name__ == "__main__":
             for sub in os.listdir(rep_path):
                 sub_path = os.path.join(rep_path, sub)
                 results_csv_path = os.path.join(sub_path, "results.csv")
-                if os.path.exists(results_csv_path): completed += 1
-        
-        summary.append((task_id, completed))
 
-    summary_df = pd.DataFrame(summary, columns=["task_id", "completed_runs"])
-    summary_df["completion_rate"] = summary_df["completed_runs"] / 10
+                if os.path.exists(results_csv_path): 
+                    try: 
+                        results_row = pd.read_csv(results_csv_path).iloc[0]
+                        compiled_rows.append({
+                            "task_id": task_id,
+                            "seed": results_row.get("seed"),
+                            "best_cv_score": results_row.get("best_cv_score"),
+                            "test_score": results_row.get("test_score"),
+                            "finished": 1
+                        })
+                    except Exception as e:
+                        print(f"Error reading {results_csv_path} - {e}")
+                
+                else:
+                    compiled_rows.append({
+                        "task_id": task_id,
+                        "seed": rep_folder.replace("Rep_", ""),
+                        "best_cv_score": None,
+                        "test_score": None,
+                        "finished": 0
+                    })
 
+    summary_df = pd.DataFrame(compiled_rows)
+    summary_df = summary_df.sort_values(by=["task_id", "replicate"])
     summary_df.to_csv("completion_summary.csv", index=False)
+
+
+
