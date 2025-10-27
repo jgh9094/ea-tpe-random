@@ -24,6 +24,7 @@ if __name__ == "__main__":
     for task_id in task_ids:
         # results/{task_id}
         task_dir = os.path.join(results_path, str(task_id))
+        print(task_dir)
         if not os.path.exists(task_dir):
             print(f"Folder for task {task_id} doesn't exist.")
             continue
@@ -33,17 +34,22 @@ if __name__ == "__main__":
             # ignore folders that don't start with "Rep_"
             if not rep_folder.startswith("Rep_"): continue
             rep_path = os.path.join(task_dir, rep_folder)
+            print(rep_path)
             if not os.path.isdir(rep_path): 
-                print(f"{rep_path} doesn't exist.")
+                print(f"Folder {rep_path} doesn't exist.")
                 continue
             
             # {task_id}/Rep_{slurm_id}/{task_id}-{slurm_id}/results.csv
             for sub in os.listdir(rep_path):
+                print(sub)
+                  
                 sub_path = os.path.join(rep_path, sub)
+                print(sub_path)
                 results_csv_path = os.path.join(sub_path, "results.csv")
-
+                
+                print(results_csv_path)
                 if os.path.exists(results_csv_path): 
-                    try: 
+                    try: # there should only be a single row
                         results_row = pd.read_csv(results_csv_path).iloc[0]
                         compiled_rows.append({
                             "task_id": task_id,
@@ -65,8 +71,12 @@ if __name__ == "__main__":
                     })
 
     summary_df = pd.DataFrame(compiled_rows)
-    summary_df = summary_df.sort_values(by=["task_id", "replicate"])
+    # summary_df = summary_df.sort_values(by=["task_id", "replicate"])
+    print("Columns:", summary_df.columns.tolist())
+    print("Number of rows:", len(summary_df))
+    print(summary_df.head())
     summary_df.to_csv("completion_summary.csv", index=False)
+
 
 
 
